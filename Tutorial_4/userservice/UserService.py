@@ -1,13 +1,20 @@
 from Tutorial_4.userdao.UserDAO import UserDAO
+from Tutorial_4.validation.UserValidation import UserValidation
+from Tutorial_4.model.User import User
 # Creating a service layer for the user class this will handle business logic related to user
 # this is an example of MVC (Model View Controller) Good programming practice for website development
 class UserService:
+
+    def __init__(self, userValidation):
+        # Create an instance of UserDAO to handle user data
+        self.userDAO = UserDAO([])  # Passing an empty list to UserDAO constructor
+        self.userValidation = userValidation
 
     # Creating the login function
     def login(self):
 
         # Retrieve the list of all users from UserDAO
-        userListToCheckAgainst = UserDAO.getAllUsers()
+        userListToCheckAgainst = self.userDAO.getAllUsers()
 
         # Prompt the user for email and password input
         email = input("Enter your Email: ")
@@ -29,3 +36,22 @@ class UserService:
         # If no matching user is found, display an error message
         if not user_found:
             print("Invalid username or password. Try again.")
+            self.login()
+
+    def signUp(self):
+        firstName = input("Enter First Name: ")
+        lastName = input("Enter Last Name: ")
+        email = input("Enter Email: ")
+        password = input("Enter Password: ")
+
+        if self.userValidation.checkEmail(self.userDAO.getAllUsers(), email) and self.userValidation.checkPassword(password):
+            userToCreate = User(firstName, lastName, email, password)
+            self.userDAO.createUser(userToCreate)
+            print(f"Hello {firstName} {lastName}, your account has been created successfully!")
+            for user in self.userDAO.getAllUsers():
+                print(user)
+        else:
+            print("Sign up failed. Please try again.")
+            self.signUp()  # Recursive call if validation fails
+
+

@@ -3,16 +3,22 @@ from Tutorial_4.model.User import User
 # class to hold all users in memory, using this instead of database
 class UserDAO:
 
-    # Function is static so that it can be accessed without an object of the class
-    # this method is a getter to grab all users but also creates them usually this will grab users from a database
-    @staticmethod
-    def getAllUsers():
-        userList = []
+    def __init__(self, user_list=None):
+        # Initialize user_list as an empty list if None is provided
+        self.user_list = user_list if user_list is not None else []
 
-        userManager = User("John", "Doe", "John@gmail.com", "pw1", True)
-        userEmployee = User("Daniel", "Doe", "Daniel@gmail.com", "pw2", False)
+    # This method grabs all users, and creates some if the list is empty
+    def getAllUsers(self):
+        if not self.user_list:  # Check if the list is empty
+            # Create default users if list is empty
+            user_manager = User("John", "Doe", "John@gmail.com", "pw1", True)
+            user_employee = User("Daniel", "Doe", "Daniel@gmail.com", "pw2", False)
 
-        userList.append(userManager)
-        userList.append(userEmployee)
+            self.user_list.append(user_manager)
+            self.user_list.append(user_employee)
 
-        return userList
+        return self.user_list
+
+    # Add a new user to the list
+    def createUser(self, user):
+        self.user_list.append(user)
